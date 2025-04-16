@@ -8,5 +8,4 @@ import { FooterComponent } from "./country/components/footer/footer.component";
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  title = 'country-app';
 }

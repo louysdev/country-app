@@ -1,9 +1,16 @@
-import { Component, inject, resource, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  linkedSignal,
+  resource,
+  signal,
+} from '@angular/core';
 import { CountryListComponent } from '../../components/country-list/country-list.component';
 import { CountrySearchInputComponent } from '../../components/country-search-input/country-search-input.component';
 import { CountryService } from '../../services/country.service';
 import { firstValueFrom, of } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-by-capital-page',
@@ -12,7 +19,13 @@ import { rxResource } from '@angular/core/rxjs-interop';
 })
 export class ByCapitalPageComponent {
   countryService = inject(CountryService);
-  query = signal('');
+  router = inject(Router);
+
+  activatedRoute = inject(ActivatedRoute);
+  // Tomar el parametro del snapshot de la pagina. No es un observable
+  queryParams = this.activatedRoute.snapshot.queryParamMap.get('query');
+
+  query = linkedSignal(() => this.queryParams);
 
   // Resource pattern
   countryResource = rxResource({
@@ -25,6 +38,12 @@ export class ByCapitalPageComponent {
       // Validación para que no se haga la petición si no hay query
       if (!request.query) return of([]);
 
+      this.router.navigate(['/country/by-capital'], {
+        queryParams: {
+          query: request.query,
+          // hola: 'mundo'
+        },
+      });
       // Se hace la petición y se regresa el resultado, y regresa una promesa
       return this.countryService.searchByCapital(request.query);
     },

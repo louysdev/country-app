@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, effect, input, linkedSignal, output, signal } from '@angular/core';
 
 @Component({
   selector: 'country-search-input',
@@ -6,10 +6,24 @@ import { Component, input, output } from '@angular/core';
   templateUrl: './country-search-input.component.html',
 })
 export class CountrySearchInputComponent {
-  placeholder = input<string>("Buscar");
-  inputValue = output<string>();
+  placeholder = input<string>('Buscar');
+  value = output<string>();
+  debounceTime = input<number>(300);
+  initialValue = input<string>();
 
-  onSearch(value: string) {
-    this.inputValue.emit(value);
-  }
+  inputValue = linkedSignal<string>(() => this.initialValue() ?? '');
+
+  // Recordar que cambia dependiendo de la señal
+  debounceEffect = effect((onCleanup) => {
+    const value = this.inputValue();
+
+    const timeout = setTimeout(() => {
+      this.value.emit(value);
+    }, this.debounceTime());
+
+    // Sin esto solo se ralentiza la ejecución del emit
+    onCleanup(() => {
+      clearTimeout(timeout);
+    });
+  });
 }

@@ -5,10 +5,12 @@
     [placeholder]="placeholder()"
     autofocus
     #txtSearch
-    (keyup.enter)="onSearch(txtSearch.value)"
+    (keyup.enter)="value.emit(txtSearch.value)"
+    (keyup)="inputValue.set(txtSearch.value)"
+    [value]="inputValue()"
   />
 
-  <button class="btn btn-primary" (click)="onSearch(txtSearch.value)">
+  <button class="btn btn-primary" (click)="this.value.emit(txtSearch.value)">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"

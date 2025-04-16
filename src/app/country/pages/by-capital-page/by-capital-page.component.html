@@ -1,6 +1,7 @@
 <country-search-input
   placeholder="Buscar por capital"
-  (inputValue)="query.set($event)"
+  (value)="query.set($event)"
+  [initialValue]="query()!"
 />
 
 <!-- @if (isError()) {
